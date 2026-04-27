@@ -337,10 +337,14 @@ export class BookMockupRenderer {
     const previousSize = new THREE.Vector2();
     this.renderer.getSize(previousSize);
     const previousAspect = this.camera.aspect;
+    const previousBackground = this.scene.background;
+    const previousClearAlpha = this.renderer.getClearAlpha();
 
     this.renderer.setSize(preset.width, preset.height, false);
     this.camera.aspect = preset.width / preset.height;
     this.camera.updateProjectionMatrix();
+    this.scene.background = null;
+    this.renderer.setClearAlpha(0);
     this.renderer.render(this.scene, this.camera);
 
     const dataUrl = this.renderer.domElement.toDataURL("image/png");
@@ -348,6 +352,8 @@ export class BookMockupRenderer {
     this.renderer.setSize(previousSize.x, previousSize.y, false);
     this.camera.aspect = previousAspect;
     this.camera.updateProjectionMatrix();
+    this.scene.background = previousBackground;
+    this.renderer.setClearAlpha(previousClearAlpha);
     this.render();
 
     return {

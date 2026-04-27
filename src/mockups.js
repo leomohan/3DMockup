@@ -71,16 +71,29 @@ export const MOCKUP_TEMPLATES = [
     description: "Three stacked copies with the uploaded cover on the top book.",
     create(materials, pageMaterial) {
       const group = new THREE.Group();
+      const dummyMaterials = [
+        pageMaterial,
+        pageMaterial,
+        pageMaterial,
+        pageMaterial,
+        pageMaterial,
+        pageMaterial
+      ];
 
-      for (let i = 0; i < 3; i += 1) {
-        const stackMaterials = i === 2
-          ? materials
-          : [pageMaterial, pageMaterial, pageMaterial, pageMaterial, pageMaterial, pageMaterial];
-        const book = createBook(stackMaterials);
-        book.rotation.set(Math.PI / 2, 0, i === 2 ? 0.06 : 0);
-        book.position.set(i * 0.05 - 0.05, -0.8 + i * 0.18, i * 0.04);
-        group.add(book);
-      }
+      const baseBook = createBook(dummyMaterials);
+      baseBook.rotation.set(-Math.PI / 2, 0, -0.04);
+      baseBook.position.set(-0.08, -0.88, -0.18);
+      group.add(baseBook);
+
+      const middleBook = createBook(dummyMaterials);
+      middleBook.rotation.set(-Math.PI / 2, 0, 0.02);
+      middleBook.position.set(0.04, -0.68, 0.02);
+      group.add(middleBook);
+
+      const heroBook = createBook(materials);
+      heroBook.rotation.set(-Math.PI / 2, 0, 0.1);
+      heroBook.position.set(0.18, -0.42, 0.3);
+      group.add(heroBook);
 
       group.rotation.z = -0.1;
       return group;

@@ -48,14 +48,22 @@ function loadImage(file) {
     return;
   }
 
-  const objectUrl = URL.createObjectURL(file);
-  const image = new Image();
-  image.onload = () => {
-    renderer.setImage(image);
-    showCoverPreview(objectUrl);
-    URL.revokeObjectURL(objectUrl);
+  const reader = new FileReader();
+  reader.onload = () => {
+    const dataUrl = typeof reader.result === "string" ? reader.result : "";
+    if (!dataUrl) {
+      return;
+    }
+
+    const image = new Image();
+    image.onload = () => {
+      renderer.setImage(image);
+      showCoverPreview(dataUrl);
+      coverInput.value = "";
+    };
+    image.src = dataUrl;
   };
-  image.src = objectUrl;
+  reader.readAsDataURL(file);
 }
 
 function triggerDownload(dataUrl, filename) {
@@ -81,6 +89,7 @@ coverInput.addEventListener("change", (event) => {
 ["dragenter", "dragover"].forEach((eventName) => {
   dropzone.addEventListener(eventName, (event) => {
     event.preventDefault();
+    event.stopPropagation();
     dropzone.classList.add("is-dragging");
   });
 });
@@ -88,11 +97,14 @@ coverInput.addEventListener("change", (event) => {
 ["dragleave", "drop"].forEach((eventName) => {
   dropzone.addEventListener(eventName, (event) => {
     event.preventDefault();
+    event.stopPropagation();
     dropzone.classList.remove("is-dragging");
   });
 });
 
 dropzone.addEventListener("drop", (event) => {
+  event.preventDefault();
+  event.stopPropagation();
   const [file] = event.dataTransfer.files;
   loadImage(file);
 });
